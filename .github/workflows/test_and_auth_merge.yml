@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
 
 jobs:
   test:
@@ -29,7 +33,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Git
+        run: git config --global user.name "Abdul Halim" && git config --global user.email "abdulhalim.cu10@gmail.com"
+
       - name: Merge pull request
-        run: git merge --ff ${{ github.head_ref }}
+        run: |
+          git fetch origin ${{ github.head_ref }}:refs/remotes/origin/${{ github.head_ref }}
+          git merge --ff-only ${{ github.head_ref }}
+          git push origin HEAD:${{ github.base_ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
