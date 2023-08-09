@@ -39,7 +39,7 @@ jobs:
       - name: Merge pull request
         run: |
           git config --global pull.ff only
-          git pull origin ${{ github.head_ref }}:${{ github.head_ref }} 
+          git pull origin ${{ github.head_ref }}:${{ github.head_ref }}  --ff-only
           git merge --ff-only ${{ github.head_ref }}
           git push origin HEAD:${{ github.base_ref }}
         env:
