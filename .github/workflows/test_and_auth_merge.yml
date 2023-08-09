@@ -1,10 +1,6 @@
 name: CI
 
-on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
+on: [push, pull_request]
 
 jobs:
   test:
@@ -22,63 +18,3 @@ jobs:
       - name: Run tests with verbose output
         run: |
           go test -v ./...
-
-  merge:
-    name: Merge Pull Request
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && needs.test.result == 'success'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Git
-        run: git config --global user.name "Abdul Halim" && git config --global user.email "abdulhalim.cu10@gmail.com"
-
-#      - name: Merge pull request
-#        run: |
-#          git config pull.ff only
-#
-#          # Fetch the base branch
-#          git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
-#
-#          # Checkout the base branch
-#          git checkout ${{ github.base_ref }}
-#
-#          # Attempt the merge
-#          if git merge --ff-only ${{ github.head_ref }}; then
-#            # Push the merged changes
-#            git push origin ${{ github.base_ref }}
-#          else
-#            echo "Fast-forward merge failed. Checking for conflicts..."
-#            if git diff --name-only --diff-filter=U; then
-#              echo "Merge conflicts detected. Manual intervention required."
-#            else
-#              echo "No merge conflicts detected."
-#            fi
-#          fi
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Merge pull request and close
-        run: |
-          git config pull.ff only
-          git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
-          git checkout ${{ github.base_ref }}
-          if git merge --ff-only ${{ github.head_ref }}; then
-            git push origin ${{ github.base_ref }}
-
-            # Close the pull request using GitHub API
-            curl -X POST -H "Authorization: Bearer $GITHUB_TOKEN" \
-                 -d '{"state": "closed"}' \
-                 "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}"
-          else
-            echo "Fast-forward merge failed. Checking for conflicts..."
-            if git diff --name-only --diff-filter=U; then
-              echo "Merge conflicts detected. Manual intervention required."
-            else
-              echo "No merge conflicts detected."
-            fi
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
