@@ -38,7 +38,7 @@ jobs:
 
       - name: Merge pull request
         run: |
-          git fetch origin ${{ github.head_ref }}:${{ github.head_ref }} --allow-unrelated-histories
+          git pull origin ${{ github.head_ref }}:${{ github.head_ref }} 
           git merge --ff-only ${{ github.head_ref }}
           git push origin HEAD:${{ github.base_ref }}
         env:
