@@ -1,4 +1,4 @@
-package isunique
+package hasduplicate
 
 import "testing"
 
