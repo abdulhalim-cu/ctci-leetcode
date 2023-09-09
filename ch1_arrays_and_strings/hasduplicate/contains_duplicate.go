@@ -1,4 +1,4 @@
-package isunique
+package hasduplicate
 
 func containsDuplicate(nums []int) bool {
 	seen := make(map[int]bool)
